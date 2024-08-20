@@ -158,6 +158,9 @@
             document.getElementById('name').value = '';
             document.getElementById('amount').value = '';
             document.getElementById('date').value = '';
+
+            // Send debt info to Discord webhook
+            sendToWebhook(debt);
         }
 
         function togglePaid(button) {
@@ -197,6 +200,29 @@
         function loadDebts() {
             const debts = JSON.parse(localStorage.getItem('debts')) || [];
             debts.forEach(displayDebt);
+        }
+
+        function sendToWebhook(debt) {
+            const webhookUrl = 'https://discord.com/api/webhooks/1275454587624620144/gGHe6iF-o3-qcUyH7V7tL6dtWwt9JKZzF-YzGDEfoaB5UpI0IJxS4nbrDBJr2gi1O_G7';
+            const message = {
+                content: `Bagong Utang:\nPangalan: ${debt.name}\nHalaga: ₱${debt.amount}\nPetsa: ${debt.date}`
+            };
+
+            fetch(webhookUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(message)
+            }).then(response => {
+                if (response.ok) {
+                    console.log('Debt sent to webhook successfully.');
+                } else {
+                    console.error('Failed to send debt to webhook.');
+                }
+            }).catch(error => {
+                console.error('Error sending debt to webhook:', error);
+            });
         }
     </script>
 </body>
