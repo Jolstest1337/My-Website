@@ -66,50 +66,6 @@
         .form-group button:hover {
             background-color: #303f9f;
         }
-
-        .list {
-            margin-top: 20px;
-        }
-
-        .list-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            border-bottom: 1px solid #333;
-            background-color: #2c2c2c;
-            border-radius: 5px;
-            margin-bottom: 10px;
-        }
-
-        .list-item:nth-child(even) {
-            background-color: #333;
-        }
-
-        .checkbox {
-            margin-right: 10px;
-        }
-
-        .paid {
-            color: #4caf50;
-        }
-
-        .unpaid {
-            color: #f44336;
-        }
-
-        button {
-            border: none;
-            background: none;
-            cursor: pointer;
-            color: #f44336;
-            font-size: 16px;
-            transition: color 0.3s;
-        }
-
-        button:hover {
-            color: #ffffff;
-        }
     </style>
 </head>
 <body>
@@ -130,14 +86,9 @@
         <div class="form-group">
             <button onclick="addDebt()">Magdagdag ng Utang</button>
         </div>
-        <div class="list" id="debtList">
-            <!-- Listahan ng mga utang -->
-        </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', loadDebts);
-
         function addDebt() {
             const name = document.getElementById('name').value;
             const amount = document.getElementById('amount').value;
@@ -149,63 +100,30 @@
             }
 
             const debt = { name, amount, date, paid: false };
-            let debts = JSON.parse(localStorage.getItem('debts')) || [];
-            debts.push(debt);
-            localStorage.setItem('debts', JSON.stringify(debts));
-            displayDebt(debt);
+
+            // Send debt info to Discord webhook
+            sendToWebhook(debt);
 
             // Clear the input fields
             document.getElementById('name').value = '';
             document.getElementById('amount').value = '';
             document.getElementById('date').value = '';
-
-            // Send debt info to Discord webhook
-            sendToWebhook(debt);
-        }
-
-        function togglePaid(button) {
-            const listItem = button.parentElement;
-            const checkbox = listItem.querySelector('.checkbox');
-            const index = Array.from(listItem.parentElement.children).indexOf(listItem);
-            let debts = JSON.parse(localStorage.getItem('debts'));
-
-            if (checkbox.checked) {
-                listItem.classList.remove('paid');
-                listItem.classList.add('unpaid');
-                button.textContent = 'X';
-                debts[index].paid = false;
-            } else {
-                listItem.classList.remove('unpaid');
-                listItem.classList.add('paid');
-                button.textContent = '✔';
-                debts[index].paid = true;
-            }
-
-            localStorage.setItem('debts', JSON.stringify(debts));
-        }
-
-        function displayDebt(debt) {
-            const list = document.getElementById('debtList');
-            const listItem = document.createElement('div');
-            listItem.className = 'list-item';
-            listItem.classList.add(debt.paid ? 'paid' : 'unpaid');
-            listItem.innerHTML = `
-                <input type="checkbox" class="checkbox" ${debt.paid ? 'checked' : ''}>
-                <span>${debt.name} - ₱${debt.amount} ( ${debt.date} )</span>
-                <button onclick="togglePaid(this)">X</button>
-            `;
-            list.appendChild(listItem);
-        }
-
-        function loadDebts() {
-            const debts = JSON.parse(localStorage.getItem('debts')) || [];
-            debts.forEach(displayDebt);
         }
 
         function sendToWebhook(debt) {
             const webhookUrl = 'https://discord.com/api/webhooks/1275454587624620144/gGHe6iF-o3-qcUyH7V7tL6dtWwt9JKZzF-YzGDEfoaB5UpI0IJxS4nbrDBJr2gi1O_G7';
             const message = {
-                content: `Bagong Utang:\nPangalan: ${debt.name}\nHalaga: ₱${debt.amount}\nPetsa: ${debt.date}`
+                embeds: [
+                    {
+                        title: "Bagong Utang",
+                        description: `**Pangalan:** ${debt.name}\n**Halaga:** ₱${debt.amount}\n**Petsa:** ${debt.date}`,
+                        color: 0x0099ff, // Blue color
+                        timestamp: new Date(),
+                        footer: {
+                            text: "Listahan ng Utang"
+                        }
+                    }
+                ]
             };
 
             fetch(webhookUrl, {
