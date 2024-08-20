@@ -89,7 +89,7 @@
     </div>
 
     <script>
-        function addDebt() {
+        async function addDebt() {
             const name = document.getElementById('name').value;
             const amount = document.getElementById('amount').value;
             const date = document.getElementById('date').value;
@@ -99,48 +99,28 @@
                 return;
             }
 
-            const debt = { name, amount, date, paid: false };
+            const message = `Name: ${name}\nAmount: ₱${amount}\nDate: ${date}`;
+            const webhookURL = 'https://discord.com/api/webhooks/1275454587624620144/gGHe6iF-o3-qcUyH7V7tL6dtWwt9JKZzF-YzGDEfoaB5UpI0IJxS4nbrDBJr2gi1O_G7';
 
-            // Send debt info to Discord webhook
-            sendToWebhook(debt);
-
-            // Clear the input fields
-            document.getElementById('name').value = '';
-            document.getElementById('amount').value = '';
-            document.getElementById('date').value = '';
-        }
-
-        function sendToWebhook(debt) {
-            const webhookUrl = 'https://discord.com/api/webhooks/1275454587624620144/gGHe6iF-o3-qcUyH7V7tL6dtWwt9JKZzF-YzGDEfoaB5UpI0IJxS4nbrDBJr2gi1O_G7';
-            const message = {
-                embeds: [
-                    {
-                        title: "Bagong Utang",
-                        description: `**Pangalan:** ${debt.name}\n**Halaga:** ₱${debt.amount}\n**Petsa:** ${debt.date}`,
-                        color: 0x0099ff, // Blue color
-                        timestamp: new Date(),
-                        footer: {
-                            text: "Listahan ng Utang"
-                        }
-                    }
-                ]
-            };
-
-            fetch(webhookUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(message)
-            }).then(response => {
-                if (response.ok) {
-                    console.log('Debt sent to webhook successfully.');
-                } else {
-                    console.error('Failed to send debt to webhook.');
-                }
-            }).catch(error => {
-                console.error('Error sending debt to webhook:', error);
-            });
+            try {
+                await fetch(webhookURL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        content: message
+                    })
+                });
+                alert('Utang naipadala!');
+                // Clear the input fields
+                document.getElementById('name').value = '';
+                document.getElementById('amount').value = '';
+                document.getElementById('date').value = '';
+            } catch (error) {
+                console.error('Error sending message:', error);
+                alert('May nangyaring error sa pagpapadala.');
+            }
         }
     </script>
 </body>
