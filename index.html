@@ -3,72 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hi</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="icon" href="https://cdn.discordapp.com/attachments/1157494694901719081/1272822590603264103/316c960a97a7bc0ee833724f7496348f.jpg?ex=66bc5fe9&is=66bb0e69&hm=41f10c3575264aab2c98d308d4f5db2d1607afbe8af5fc864eaa9dc2cca435ef&" type="image/jpeg">
-    <script src="script.js" defer></script>
+    <title>Listahan ng Utang</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h1 {
+            color: #f5f5f5;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #e0e0e0;
+            margin-bottom: 5px;
+        }
+
+        .form-group input, .form-group button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            background-color: #2c2c2c;
+            color: #e0e0e0;
+        }
+
+        .form-group input::placeholder {
+            color: #999;
+        }
+
+        .form-group button {
+            border: none;
+            background-color: #3f51b5;
+            color: #ffffff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .form-group button:hover {
+            background-color: #303f9f;
+        }
+
+        .list {
+            margin-top: 20px;
+        }
+
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #333;
+            background-color: #2c2c2c;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .list-item:nth-child(even) {
+            background-color: #333;
+        }
+
+        .checkbox {
+            margin-right: 10px;
+        }
+
+        .paid {
+            color: #4caf50;
+        }
+
+        .unpaid {
+            color: #f44336;
+        }
+
+        button {
+            border: none;
+            background: none;
+            cursor: pointer;
+            color: #f44336;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        button:hover {
+            color: #ffffff;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <div class="background-changer">
-                <span id="background-icon" onclick="changeBackground()">🌙</span>
-            </div>
-            <nav class="navbar">
-                <a href="#about" class="nav-link">About Me</a>
-                <a href="#skills" class="nav-link">Skills</a>
-                <a href="#projects" class="nav-link">Projects</a>
-                <a href="#contact" class="nav-link">Contact</a>
-            </nav>
-        </header>
-
-        <main>
-            <section id="about" class="section">
-                <div class="profile">
-                    <div class="profile-content">
-                        <img src="https://cdn.discordapp.com/attachments/1157494694901719081/1272822590129442868/3cf52b2ab5edd9a916f0ec98e7f32f88.jpg?ex=66bc5fe9&is=66bb0e69&hm=a0d62cea526b03c6756f943d8cb861b8273f35ef3bb095b5f440e58d1d942c5f&" alt="Profile Image" class="profile-image">
-                        <div class="profile-text">
-                            <h1>Lunox</h1>
-                            <p>NEED A JOB.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section id="skills" class="section">
-                <h2>Skills</h2>
-                <div class="skills-container">
-                    <div class="skill-card">Python</div>
-                    <div class="skill-card">Java & JavaScript</div>
-                    <div class="skill-card">HTML & CSS</div>
-                    <div class="skill-card">C++ & C#</div>
-                </div>
-            </section>
-
-            <section id="projects" class="section">
-                <h2>Projects</h2>
-                <div class="projects-container">
-                    <a href="https://github.com/Jolstest1337/Ani.Py" target="_blank" class="project-card">ANI.PY</a>
-                    <a href="https://github.com/Jolstest1337/SimplePasteWebsiteIuse" target="_blank" class="project-card">SimplePasteWebsiteIuse</a>
-                    <a href="https://github.com/Jolstest1337/Random.py" target="_blank" class="project-card">Random.py</a>
-                </div>
-            </section>
-
-            <section id="contact" class="section">
-                <h2>Contact</h2>
-                <p>CALL ME BITCHES!</p>
-            </section>
-
-            <footer>
-                <div class="social-media">
-                    <a href="https://github.com/Jolstest1337" target="_blank" class="social-link github">GitHub</a>
-                    <a href="https://www.youtube.com/@imbatmanriel" target="_blank" class="social-link youtube">YouTube</a>
-                    <a href="https://www.facebook.com/Jols1337/" target="_blank" class="social-link facebook">Facebook</a>
-                    <a href="https://discord.com/" target="_blank" class="social-link discord">Discord</a>
-
-                </div>
-            </footer>
-        </main>
+        <h1>Listahan ng Utang</h1>
+        <div class="form-group">
+            <label for="name">Pangalan:</label>
+            <input type="text" id="name" placeholder="Pangalan ng tao">
+        </div>
+        <div class="form-group">
+            <label for="amount">Magkanong Inutang:</label>
+            <input type="number" id="amount" placeholder="Halaga ng utang">
+        </div>
+        <div class="form-group">
+            <label for="date">Kelan Umutang:</label>
+            <input type="date" id="date">
+        </div>
+        <div class="form-group">
+            <button onclick="addDebt()">Magdagdag ng Utang</button>
+        </div>
+        <div class="list" id="debtList">
+            <!-- Listahan ng mga utang -->
+        </div>
     </div>
+
+    <script>
+        function addDebt() {
+            const name = document.getElementById('name').value;
+            const amount = document.getElementById('amount').value;
+            const date = document.getElementById('date').value;
+
+            if (!name || !amount || !date) {
+                alert('Punan ang lahat ng fields.');
+                return;
+            }
+
+            const list = document.getElementById('debtList');
+            const listItem = document.createElement('div');
+            listItem.className = 'list-item';
+            listItem.innerHTML = `
+                <input type="checkbox" class="checkbox">
+                <span>${name} - ₱${amount} ( ${date} )</span>
+                <button onclick="togglePaid(this)">X</button>
+            `;
+            list.appendChild(listItem);
+
+            // Clear the input fields
+            document.getElementById('name').value = '';
+            document.getElementById('amount').value = '';
+            document.getElementById('date').value = '';
+        }
+
+        function togglePaid(button) {
+            const listItem = button.parentElement;
+            const checkbox = listItem.querySelector('.checkbox');
+            if (checkbox.checked) {
+                listItem.classList.remove('paid');
+                listItem.classList.add('unpaid');
+                button.textContent = 'X';
+            } else {
+                listItem.classList.remove('unpaid');
+                listItem.classList.add('paid');
+                button.textContent = '✔';
+            }
+        }
+    </script>
 </body>
 </html>
