@@ -371,38 +371,42 @@ T_2 = ${secondTerm}`;
         }
 
         function calculateGeometricFiniteSeries(event) {
-            event.preventDefault();
-            const firstTerm = parseFloat(document.getElementById('geometric-first-term').value);
-            const secondTerm = parseFloat(document.getElementById('geometric-second-term').value);
-            const thirdTerm = parseFloat(document.getElementById('geometric-third-term').value) || null;
-            const fourthTerm = parseFloat(document.getElementById('geometric-fourth-term').value) || null;
-            const numTerms = parseInt(document.getElementById('geometric-terms').value);
+    event.preventDefault();
 
-            let commonRatio;
-            if (thirdTerm !== null && fourthTerm !== null) {
-                commonRatio = (fourthTerm / thirdTerm) || (secondTerm / firstTerm);
-            } else {
-                commonRatio = (secondTerm / firstTerm);
-            }
+    const firstTerm = parseFloat(document.getElementById('geometric-first-term').value);
+    const secondTerm = parseFloat(document.getElementById('geometric-second-term').value);
+    const thirdTerm = parseFloat(document.getElementById('geometric-third-term').value) || null;
+    const fourthTerm = parseFloat(document.getElementById('geometric-fourth-term').value) || null;
+    const numTerms = parseInt(document.getElementById('geometric-terms').value);
 
-            let sum;
-            if (commonRatio === 1) {
-                sum = firstTerm * numTerms;
-            } else {
-                sum = firstTerm * (Math.pow(commonRatio, numTerms) - 1) / (commonRatio - 1);
-            }
+    let commonRatio;
+    if (thirdTerm !== null && fourthTerm !== null) {
+        commonRatio = (fourthTerm / thirdTerm) || (secondTerm / firstTerm);
+    } else {
+        commonRatio = (secondTerm / firstTerm);
+    }
 
-            document.getElementById('geometric-result').innerText = `Sum of Finite Series: ${sum}`;
-            document.getElementById('geometric-solution').innerText = `The sum of the first ${numTerms} terms is calculated using the formula:
-            
-S_n = a * (r^n - 1) / (r - 1)
+    let sum;
+    if (commonRatio === 1) {
+        sum = firstTerm * numTerms; 
+    } else {
+        sum = firstTerm * (Math.pow(commonRatio, numTerms) - 1) / (commonRatio - 1);
+    }
 
-where:
-a = ${firstTerm}
-r = ${commonRatio}
-n = ${numTerms}`;
-        }
+    document.getElementById('geometric-result').innerText = `Sum of Finite Series: ${sum}`;
 
+    document.getElementById('geometric-solution').innerHTML = `
+        The sum of the first ${numTerms} terms is calculated using the formula:<br><br>
+        <div style="text-align: center;">
+            S<sub>${numTerms}</sub> = ${firstTerm} × <sup>${commonRatio}<sup>${numTerms}</sup> - 1</sup> / (${commonRatio} - 1)<br><br>
+            = ${firstTerm} × <sup>${commonRatio}<sup>${numTerms}</sup></sup> - 1 / (${commonRatio} - 1)<br><br>
+            = ${firstTerm} × (${Math.pow(commonRatio, numTerms)} - 1) / (${commonRatio} - 1)<br><br>
+            = ${firstTerm} × ${((Math.pow(commonRatio, numTerms) - 1) / (commonRatio - 1)).toFixed(2)}<br><br>
+            = ${sum}
+        </div>
+    `;
+} 
+ 
         function displayQuadraticInputs() {
             const solveFor = document.getElementById('quadratic-solve-for').value;
             let html = '';
