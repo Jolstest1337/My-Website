@@ -3,124 +3,491 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Listahan ng Utang</title>
+    <title>Sequence Calculator</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #121212;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1e1e1e;
             color: #e0e0e0;
+            margin: 0;
+            padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            margin: 0;
+            overflow: hidden;
         }
-
         .container {
-            background-color: #1e1e1e;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            max-width: 1200px;
             width: 100%;
-            max-width: 500px;
+            background: linear-gradient(145deg, #2a2a2a, #3c3c3c);
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            max-height: 90vh;
+            overflow-y: auto;
         }
-
-        h1 {
-            color: #f5f5f5;
-            text-align: center;
+        .container-inner {
+            display: flex;
+            flex-direction: row;
+        }
+        .div-left {
+            background: linear-gradient(145deg, #1a73e8, #005bb5);
+            color: white;
+            width: 100%;
+            max-width: 1160px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-right: 2px solid #2a2a2a;
+        }
+        .div-left h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        .div-left button {
+            background-color: #4a90e2;
+            color: #ffffff;
+            border: none;
+            padding: 12px 24px;
+            margin: 10px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+            width: 100%;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .div-left button:hover {
+            background-color: #357ae8;
+            transform: scale(1.05);
+        }
+        .div-left button:focus {
+            outline: none;
+        }
+        .div-content {
+            padding: 20px;
+            flex: 1;
+            background: #2a2a2a;
+            color: #f0f0f0;
+            overflow-y: auto;
+        }
+        .div-content h2 {
+            color: #e0e0e0;
+            font-size: 24px;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        .div-content form {
+            background-color: #3a3a3a;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
             margin-bottom: 20px;
         }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
+        .div-content label {
             display: block;
-            color: #e0e0e0;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
+            color: #d0d0d0;
+            font-size: 14px;
         }
-
-        .form-group input, .form-group button {
-            width: 100%;
+        .div-content input, .div-content select {
+            width: calc(100% - 20px);
             padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #333;
-            border-radius: 5px;
-            background-color: #2c2c2c;
+            margin-bottom: 10px;
+            border: 1px solid #666;
+            border-radius: 8px;
+            background-color: #444;
+            color: #e0e0e0;
+            font-size: 14px;
+        }
+        .div-content button[type="submit"] {
+            background-color: #28a745;
+            color: #ffffff;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+            width: 100%;
+            font-size: 14px;
+        }
+        .div-content button[type="submit"]:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
+        .div-content .result {
+            font-size: 16px;
             color: #e0e0e0;
         }
-
-        .form-group input::placeholder {
-            color: #999;
+        .div-content .solution {
+            font-size: 14px;
+            color: #c0c0c0;
+            white-space: pre-wrap;
         }
-
-        .form-group button {
-            border: none;
-            background-color: #3f51b5;
-            color: #ffffff;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .form-group button:hover {
-            background-color: #303f9f;
+        @media (max-width: 768px) {
+            .container-inner {
+                flex-direction: column;
+            }
+            .div-left {
+                max-width: none;
+                width: 100%;
+                border-right: none;
+                border-bottom: 2px solid #2a2a2a;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Listahan ng Utang</h1>
-        <div class="form-group">
-            <label for="name">Pangalan:</label>
-            <input type="text" id="name" placeholder="Pangalan ng tao">
+        <div class="div-left">
+            <h1>Sequence Calculator</h1>
+            <button onclick="showForm('arithmetic')">Arithmetic Sequence</button>
+            <button onclick="showForm('geometric')">Geometric Sequence</button>
+            <button onclick="showForm('quadratic')">Quadratic Sequence</button>
+            <button onclick="showForm('special')">Special Sequence</button>
         </div>
-        <div class="form-group">
-            <label for="amount">Magkanong Inutang:</label>
-            <input type="number" id="amount" placeholder="Halaga ng utang">
-        </div>
-        <div class="form-group">
-            <label for="date">Kelan Umutang:</label>
-            <input type="date" id="date">
-        </div>
-        <div class="form-group">
-            <button onclick="addDebt()">Magdagdag ng Utang</button>
+        <div class="div-content">
+            <div id="arithmetic-form" style="display:none;">
+                <h2>Arithmetic Sequence</h2>
+                <form id="arithmetic-options">
+                    <label for="arithmetic-solve-for">What do you want to solve for?</label>
+                    <select id="arithmetic-solve-for" onchange="displayArithmeticInputs()">
+                        <option value="nth-term">Nth Term</option>
+                        <option value="common-difference">Common Difference</option>
+                    </select>
+                </form>
+                <div id="arithmetic-inputs"></div>
+                <div id="arithmetic-result" class="result"></div>
+                <div id="arithmetic-solution" class="solution"></div>
+            </div>
+
+            <div id="geometric-form" style="display:none;">
+                <h2>Geometric Sequence</h2>
+                <form id="geometric-options">
+                    <label for="geometric-solve-for">What do you want to solve for?</label>
+                    <select id="geometric-solve-for" onchange="displayGeometricInputs()">
+                        <option value="nth-term">Nth Term</option>
+                        <option value="common-ratio">Common Ratio</option>
+                        <option value="finite-series">Finite Series Sum</option>
+                    </select>
+                </form>
+                <div id="geometric-inputs"></div>
+                <div id="geometric-result" class="result"></div>
+                <div id="geometric-solution" class="solution"></div>
+            </div>
+
+            <div id="quadratic-form" style="display:none;">
+                <h2>Quadratic Sequence</h2>
+                <form id="quadratic-options">
+                    <label for="quadratic-solve-for">What do you want to solve for?</label>
+                    <select id="quadratic-solve-for" onchange="displayQuadraticInputs()">
+                        <option value="nth-term">Nth Term</option>
+                        <option value="coefficient">Coefficient of n²</option>
+                    </select>
+                </form>
+                <div id="quadratic-inputs"></div>
+                <div id="quadratic-result" class="result"></div>
+                <div id="quadratic-solution" class="solution"></div>
+            </div>
+
+            <div id="special-form" style="display:none;">
+                <h2>Special Sequence</h2>
+                <form onsubmit="calculateSpecial(event)">
+                    <label for="special-type">Sequence Type:</label>
+                    <input type="text" id="special-type" placeholder="e.g., Fibonacci" required><br>
+                    <label for="special-n">Term Number (n):</label>
+                    <input type="number" id="special-n" required><br>
+                    <button type="submit">Calculate</button>
+                </form>
+                <div id="special-result" class="result"></div>
+                <div id="special-solution" class="solution"></div>
+            </div>
         </div>
     </div>
 
     <script>
-        async function addDebt() {
-            const name = document.getElementById('name').value;
-            const amount = document.getElementById('amount').value;
-            const date = document.getElementById('date').value;
+        function showForm(type) {
+            const forms = document.querySelectorAll('div[id$="-form"]');
+            forms.forEach(form => form.style.display = 'none');
+            document.getElementById(type + '-form').style.display = 'block';
+        }
 
-            if (!name || !amount || !date) {
-                alert('Punan ang lahat ng fields.');
-                return;
+        function displayArithmeticInputs() {
+            const solveFor = document.getElementById('arithmetic-solve-for').value;
+            let html = '';
+
+            if (solveFor === 'nth-term') {
+                html = `
+                    <form onsubmit="calculateArithmeticNthTerm(event)">
+                        <label for="arithmetic-first-term">First Term:</label>
+                        <input type="number" id="arithmetic-first-term" required><br>
+                        <label for="arithmetic-common-difference">Common Difference:</label>
+                        <input type="number" id="arithmetic-common-difference" required><br>
+                        <label for="arithmetic-n">Term Number (n):</label>
+                        <input type="number" id="arithmetic-n" required><br>
+                        <button type="submit">Calculate Nth Term</button>
+                    </form>
+                `;
+            } else if (solveFor === 'common-difference') {
+                html = `
+                    <form onsubmit="calculateArithmeticCommonDifference(event)">
+                        <label for="arithmetic-first-term">First Term:</label>
+                        <input type="number" id="arithmetic-first-term" required><br>
+                        <label for="arithmetic-second-term">Second Term:</label>
+                        <input type="number" id="arithmetic-second-term" required><br>
+                        <label for="arithmetic-third-term">Third Term:</label>
+                        <input type="number" id="arithmetic-third-term" required><br>
+                        <button type="submit">Calculate Common Difference</button>
+                    </form>
+                `;
             }
 
-            const message = `Name: ${name}\nAmount: ₱${amount}\nDate: ${date}`;
-            const webhookURL = 'https://discord.com/api/webhooks/1275454587624620144/gGHe6iF-o3-qcUyH7V7tL6dtWwt9JKZzF-YzGDEfoaB5UpI0IJxS4nbrDBJr2gi1O_G7';
+            document.getElementById('arithmetic-inputs').innerHTML = html;
+            document.getElementById('arithmetic-solution').innerText = '';
+        }
 
-            try {
-                await fetch(webhookURL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        content: message
-                    })
-                });
-                alert('Utang naipadala!');
-                // Clear the input fields
-                document.getElementById('name').value = '';
-                document.getElementById('amount').value = '';
-                document.getElementById('date').value = '';
-            } catch (error) {
-                console.error('Error sending message:', error);
-                alert('May nangyaring error sa pagpapadala.');
+        function calculateArithmeticNthTerm(event) {
+            event.preventDefault();
+            const firstTerm = parseFloat(document.getElementById('arithmetic-first-term').value);
+            const commonDifference = parseFloat(document.getElementById('arithmetic-common-difference').value);
+            const n = parseInt(document.getElementById('arithmetic-n').value);
+
+            const nthTerm = firstTerm + (n - 1) * commonDifference;
+            document.getElementById('arithmetic-result').innerText = `Nth Term: ${nthTerm}`;
+            document.getElementById('arithmetic-solution').innerText = `The Nth term is calculated using the formula:
+            
+T_n = a + (n - 1)d
+
+where:
+a = ${firstTerm}
+d = ${commonDifference}
+n = ${n}`;
+        }
+
+        function calculateArithmeticCommonDifference(event) {
+            event.preventDefault();
+            const firstTerm = parseFloat(document.getElementById('arithmetic-first-term').value);
+            const secondTerm = parseFloat(document.getElementById('arithmetic-second-term').value);
+            const thirdTerm = parseFloat(document.getElementById('arithmetic-third-term').value);
+
+            const commonDifference = secondTerm - firstTerm;
+            document.getElementById('arithmetic-result').innerText = `Common Difference: ${commonDifference}`;
+            document.getElementById('arithmetic-solution').innerText = `The common difference is calculated using the formula:
+            
+d = T_2 - T_1
+
+where:
+T_1 = ${firstTerm}
+T_2 = ${secondTerm}`;
+        }
+
+        function displayGeometricInputs() {
+            const solveFor = document.getElementById('geometric-solve-for').value;
+            let html = '';
+
+            if (solveFor === 'nth-term') {
+                html = `
+                    <form onsubmit="calculateGeometricNthTerm(event)">
+                        <label for="geometric-first-term">First Term:</label>
+                        <input type="number" id="geometric-first-term" required><br>
+                        <label for="geometric-common-ratio">Common Ratio:</label>
+                        <input type="number" id="geometric-common-ratio" required><br>
+                        <label for="geometric-n">Term Number (n):</label>
+                        <input type="number" id="geometric-n" required><br>
+                        <button type="submit">Calculate Nth Term</button>
+                    </form>
+                `;
+            } else if (solveFor === 'common-ratio') {
+                html = `
+                    <form onsubmit="calculateGeometricCommonRatio(event)">
+                        <label for="geometric-first-term">First Term:</label>
+                        <input type="number" id="geometric-first-term" required><br>
+                        <label for="geometric-second-term">Second Term:</label>
+                        <input type="number" id="geometric-second-term" required><br>
+                        <button type="submit">Calculate Common Ratio</button>
+                    </form>
+                `;
+            } else if (solveFor === 'finite-series') {
+                html = `
+                    <form onsubmit="calculateGeometricFiniteSeries(event)">
+                        <label for="geometric-first-term">First Term:</label>
+                        <input type="number" id="geometric-first-term" required><br>
+                        <label for="geometric-second-term">Second Term:</label>
+                        <input type="number" id="geometric-second-term" required><br>
+                        <label for="geometric-third-term">Third Term (Optional):</label>
+                        <input type="number" id="geometric-third-term"><br>
+                        <label for="geometric-fourth-term">Fourth Term (Optional):</label>
+                        <input type="number" id="geometric-fourth-term"><br>
+                        <label for="geometric-terms">Number of Terms:</label>
+                        <input type="number" id="geometric-terms" required><br>
+                        <button type="submit">Calculate Finite Series</button>
+                    </form>
+                `;
             }
+
+            document.getElementById('geometric-inputs').innerHTML = html;
+            document.getElementById('geometric-result').innerText = '';
+        }
+
+        function calculateGeometricNthTerm(event) {
+            event.preventDefault();
+            const firstTerm = parseFloat(document.getElementById('geometric-first-term').value);
+            const commonRatio = parseFloat(document.getElementById('geometric-common-ratio').value);
+            const n = parseInt(document.getElementById('geometric-n').value);
+
+            const nthTerm = firstTerm * Math.pow(commonRatio, n - 1);
+            document.getElementById('geometric-result').innerText = `Nth Term: ${nthTerm}`;
+            document.getElementById('geometric-solution').innerText = `The Nth term is calculated using the formula:
+            
+T_n = a * r^(n - 1)
+
+where:
+a = ${firstTerm}
+r = ${commonRatio}
+n = ${n}`;
+        }
+
+        function calculateGeometricCommonRatio(event) {
+            event.preventDefault();
+            const firstTerm = parseFloat(document.getElementById('geometric-first-term').value);
+            const secondTerm = parseFloat(document.getElementById('geometric-second-term').value);
+
+            const commonRatio = secondTerm / firstTerm;
+            document.getElementById('geometric-result').innerText = `Common Ratio: ${commonRatio}`;
+            document.getElementById('geometric-solution').innerText = `The common ratio is calculated using the formula:
+            
+r = T_2 / T_1
+
+where:
+T_1 = ${firstTerm}
+T_2 = ${secondTerm}`;
+        }
+
+        function calculateGeometricFiniteSeries(event) {
+    event.preventDefault();
+
+    const firstTerm = parseFloat(document.getElementById('geometric-first-term').value);
+    const secondTerm = parseFloat(document.getElementById('geometric-second-term').value);
+    const thirdTerm = parseFloat(document.getElementById('geometric-third-term').value) || null;
+    const fourthTerm = parseFloat(document.getElementById('geometric-fourth-term').value) || null;
+    const numTerms = parseInt(document.getElementById('geometric-terms').value);
+
+    let commonRatio;
+    if (thirdTerm !== null && fourthTerm !== null) {
+        commonRatio = (fourthTerm / thirdTerm) || (secondTerm / firstTerm);
+    } else {
+        commonRatio = (secondTerm / firstTerm);
+    }
+
+    let sum;
+    if (commonRatio === 1) {
+        sum = firstTerm * numTerms; 
+    } else {
+        sum = firstTerm * (Math.pow(commonRatio, numTerms) - 1) / (commonRatio - 1);
+    }
+
+    document.getElementById('geometric-result').innerText = `Sum of Finite Series: ${sum}`;
+
+    document.getElementById('geometric-solution').innerHTML = `
+        The sum of the first ${numTerms} terms is calculated using the formula:<br><br>
+        <div style="text-align: center;">
+            S<sub>${numTerms}</sub> = ${firstTerm} × <sup>${commonRatio}<sup>${numTerms}</sup> - 1</sup> / (${commonRatio} - 1)<br><br>
+            = ${firstTerm} × <sup>${commonRatio}<sup>${numTerms}</sup></sup> - 1 / (${commonRatio} - 1)<br><br>
+            = ${firstTerm} × (${Math.pow(commonRatio, numTerms)} - 1) / (${commonRatio} - 1)<br><br>
+            = ${firstTerm} × ${((Math.pow(commonRatio, numTerms) - 1) / (commonRatio - 1)).toFixed(2)}<br><br>
+            = ${sum}
+        </div>
+    `;
+} 
+ 
+        function displayQuadraticInputs() {
+            const solveFor = document.getElementById('quadratic-solve-for').value;
+            let html = '';
+
+            if (solveFor === 'nth-term') {
+                html = `
+                    <form onsubmit="calculateQuadraticNthTerm(event)">
+                        <label for="quadratic-first-term">First Term:</label>
+                        <input type="number" id="quadratic-first-term" required><br>
+                        <label for="quadratic-second-term">Second Term:</label>
+                        <input type="number" id="quadratic-second-term" required><br>
+                        <label for="quadratic-third-term">Third Term:</label>
+                        <input type="number" id="quadratic-third-term" required><br>
+                        <label for="quadratic-n">Term Number (n):</label>
+                        <input type="number" id="quadratic-n" required><br>
+                        <button type="submit">Calculate Nth Term</button>
+                    </form>
+                `;
+            } else if (solveFor === 'coefficient') {
+                html = `
+                    <form onsubmit="calculateQuadraticCoefficient(event)">
+                        <label for="quadratic-first-term">First Term:</label>
+                        <input type="number" id="quadratic-first-term" required><br>
+                        <label for="quadratic-second-term">Second Term:</label>
+                        <input type="number" id="quadratic-second-term" required><br>
+                        <label for="quadratic-third-term">Third Term:</label>
+                        <input type="number" id="quadratic-third-term" required><br>
+                        <button type="submit">Calculate Coefficient</button>
+                    </form>
+                `;
+            }
+
+            document.getElementById('quadratic-inputs').innerHTML = html;
+            document.getElementById('quadratic-solution').innerText = '';
+        }
+
+        function calculateQuadraticNthTerm(event) {
+            event.preventDefault();
+            const firstTerm = parseFloat(document.getElementById('quadratic-first-term').value);
+            const secondTerm = parseFloat(document.getElementById('quadratic-second-term').value);
+            const thirdTerm = parseFloat(document.getElementById('quadratic-third-term').value);
+            const n = parseInt(document.getElementById('quadratic-n').value);
+
+            const a = (thirdTerm - 2 * secondTerm + firstTerm) / 2;
+            const b = (secondTerm - firstTerm - a) * 2;
+            const c = firstTerm;
+
+            const nthTerm = a * Math.pow(n, 2) + b * n + c;
+            document.getElementById('quadratic-result').innerText = `Nth Term: ${nthTerm}`;
+            document.getElementById('quadratic-solution').innerText = `The Nth term is calculated using the formula:
+            
+T_n = a * n^2 + b * n + c
+
+where:
+a = ${a}
+b = ${b}
+c = ${c}
+n = ${n}`;
+        }
+
+        function calculateQuadraticCoefficient(event) {
+            event.preventDefault();
+            const firstTerm = parseFloat(document.getElementById('quadratic-first-term').value);
+            const secondTerm = parseFloat(document.getElementById('quadratic-second-term').value);
+            const thirdTerm = parseFloat(document.getElementById('quadratic-third-term').value);
+
+            const a = (thirdTerm - 2 * secondTerm + firstTerm) / 2;
+            const b = (secondTerm - firstTerm - a) * 2;
+            const c = firstTerm;
+
+            document.getElementById('quadratic-result').innerText = `Coefficients: a = ${a}, b = ${b}, c = ${c}`;
+            document.getElementById('quadratic-solution').innerText = `The coefficients are calculated using the formula:
+            
+a = (T_3 - 2 * T_2 + T_1) / 2
+b = (T_2 - T_1 - a) * 2
+c = T_1
+
+where:
+T_1 = ${firstTerm}
+T_2 = ${secondTerm}
+T_3 = ${thirdTerm}`;
         }
     </script>
 </body>
