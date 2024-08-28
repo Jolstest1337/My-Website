@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sequence Calculator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1e1e1e;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            max-width: 1200px;
+            width: 100%;
+            background: linear-gradient(145deg, #2a2a2a, #3c3c3c);
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .container-inner {
+            display: flex;
+            flex-direction: row;
+        }
+        .div-left {
+            background: linear-gradient(145deg, #1a73e8, #005bb5);
+            color: white;
+            width: 100%;
+            max-width: 1160px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-right: 2px solid #2a2a2a;
+        }
+        .div-left h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        .div-left button {
+            background-color: #4a90e2;
+            color: #ffffff;
+            border: none;
+            padding: 12px 24px;
+            margin: 10px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+            width: 100%;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .div-left button:hover {
+            background-color: #357ae8;
+            transform: scale(1.05);
+        }
+        .div-left button:focus {
+            outline: none;
+        }
+        .div-content {
+            padding: 20px;
+            flex: 1;
+            background: #2a2a2a;
+            color: #f0f0f0;
+            overflow-y: auto;
+        }
+        .div-content h2 {
+            color: #e0e0e0;
+            font-size: 24px;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        .div-content form {
+            background-color: #3a3a3a;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+            margin-bottom: 20px;
+        }
+        .div-content label {
+            display: block;
+            margin-bottom: 10px;
+            color: #d0d0d0;
+            font-size: 14px;
+        }
+        .div-content input, .div-content select {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #666;
+            border-radius: 8px;
+            background-color: #444;
+            color: #e0e0e0;
+            font-size: 14px;
+        }
+        .div-content button[type="submit"] {
+            background-color: #28a745;
+            color: #ffffff;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+            width: 100%;
+            font-size: 14px;
+        }
+        .div-content button[type="submit"]:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
+        .div-content .result {
+            font-size: 16px;
+            color: #e0e0e0;
+        }
+        .div-content .solution {
+            font-size: 14px;
+            color: #c0c0c0;
+            white-space: pre-wrap;
+        }
+        @media (max-width: 768px) {
+            .container-inner {
+                flex-direction: column;
+            }
+            .div-left {
+                max-width: none;
+                width: 100%;
+                border-right: none;
+                border-bottom: 2px solid #2a2a2a;
+            }
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/10.8.1/math.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="div-left">
+            <h1>Sequence Calculator</h1>
+            <button onclick="showForm('arithmetic')">Arithmetic Sequence</button>
+            <button onclick="showForm('geometric')">Geometric Sequence</button>
+            <button onclick="showForm('quadratic')">Quadratic Sequence</button>
+            <button onclick="showForm('special')">Special Sequence</button>
+        </div>
+        <div class="div-content">
+            <div id="arithmetic-form" style="display:none;">
+                <h2>Arithmetic Sequence</h2>
+                <form id="arithmetic-options">
+                    <label for="arithmetic-solve-for">What do you want to solve for?</label>
+                    <select id="arithmetic-solve-for" onchange="displayArithmeticInputs()">
+                        <option value="nth-term">Nth Term</option>
+                        <option value="common-difference">Common Difference</option>
+                    </select>
+                </form>
+                <div id="arithmetic-inputs"></div>
+                <div id="arithmetic-result" class="result"></div>
+                <div id="arithmetic-solution" class="solution"></div>
+            </div>
+
+            <div id="geometric-form" style="display:none;">
+                <h2>Geometric Sequence</h2>
+                <form id="geometric-options">
+                    <label for="geometric-solve-for">What do you want to solve for?</label>
+                    <select id="geometric-solve-for" onchange="displayGeometricInputs()">
+                        <option value="nth-term">Nth Term</option>
+                        <option value="common-ratio">Common Ratio</option>
+                        <option value="finite-series">Finite Series Sum</option>
+                        <option value="infinite-series (Not done)">Infinite Series Sum</option>
+                    </select>
+                </form>
+                <div id="geometric-inputs"></div>
+                <div id="geometric-result" class="result"></div>
+                <div id="geometric-solution" class="solution"></div>
+            </div>
+
+            <div id="quadratic-form" style="display:none;">
+                <h2>Quadratic Sequence</h2>
+                <form id="quadratic-options">
+                    <label for="quadratic-solve-for">What do you want to solve for?</label>
+                    <select id="quadratic-solve-for" onchange="displayQuadraticInputs()">
+                        <option value="nth-term">Nth Term</option>
+                        <option value="coefficient">Coefficient of n²</option>
+                    </select>
+                </form>
+                <div id="quadratic-inputs"></div>
+                <div id="quadratic-result" class="result"></div>
+                <div id="quadratic-solution" class="solution"></div>
+            </div>
+
+            <div id="special-form" style="display:none;">
+                <h2>Special Sequence</h2>
+                <form onsubmit="calculateSpecial(event)">
+                    <label for="special-type">Sequence Type:</label>
+                    <input type="text" id="special-type" placeholder="e.g., Fibonacci" required><br>
+                    <label for="special-n">Term Number (n):</label>
+                    <input type="number" id="special-n" required><br>
+                    <button type="submit">Calculate</button>
+                </form>
+                <div id="special-result" class="result"></div>
+                <div id="special-solution" class="solution"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showForm(type) {
+            const forms = document.querySelectorAll('div[id$="-form"]');
+            forms.forEach(form => form.style.display = 'none');
+            document.getElementById(type + '-form').style.display = 'block';
+        }
+
+        function displayArithmeticInputs() {
+    const solveFor = document.getElementById('arithmetic-solve-for').value;
+    let html = '';
+
+    if (solveFor === 'nth-term') {
+        html = `
+            <form onsubmit="calculateArithmeticNthTerm(event)">
+                <label for="arithmetic-first-term">First Term:</label>
+                <input type="text" id="arithmetic-first-term" required><br>
+                <label for="arithmetic-common-difference">Common Difference:</label>
+                <input type="text" id="arithmetic-common-difference" required><br>
+                <label for="arithmetic-n">Term Number (n):</label>
+                <input type="number" id="arithmetic-n" required><br>
+                <button type="submit">Calculate Nth Term</button>
+            </form>
+            <div id="arithmetic-solution"></div>
+        `;
+    } else if (solveFor === 'common-difference') {
+        html = `
+            <form onsubmit="calculateArithmeticCommonDifference(event)">
+                <label for="arithmetic-first-term">First Term:</label>
+                <input type="text" id="arithmetic-first-term" required><br>
+                <label for="arithmetic-second-term">Second Term:</label>
+                <input type="text" id="arithmetic-second-term" required><br>
+                <label for="arithmetic-third-term">Third Term:</label>
+                <input type="text" id="arithmetic-third-term" required><br>
+                <button type="submit">Calculate Common Difference</button>
+            </form>
+            <div id="arithmetic-solution"></div>
+        `;
+    }
+
+    document.getElementById('arithmetic-inputs').innerHTML = html;
+    document.getElementById('arithmetic-solution').innerText = '';
+}
+
+
+function calculateArithmeticNthTerm(event) {
+    event.preventDefault();
+    
+    const firstTerm = parseFloat(document.getElementById('arithmetic-first-term').value);
+    const commonDifference = parseFloat(document.getElementById('arithmetic-common-difference').value);
+    const n = parseInt(document.getElementById('arithmetic-n').value);
+
+    const nthTerm = firstTerm + (n - 1) * commonDifference;
+
+    document.getElementById('arithmetic-result').innerText = `Nth Term: ${nthTerm}`;
+    document.getElementById('arithmetic-solution').innerHTML = `
+        The Nth term is calculated using the formula:<br><br>
+        T<sub>n</sub> = a + (n - 1)d<br><br>
+        where:<br>
+        a = ${firstTerm}<br>
+        d = ${commonDifference}<br>
+        n = ${n}<br><br>
+        T<sub>${n}</sub> = ${firstTerm} + (${n - 1}) × ${commonDifference}<br>
+        = ${nthTerm.toFixed(2)}
+    `;
+}
+
+
+function calculateArithmeticCommonDifference(event) {
+    event.preventDefault();
+    
+    const firstTerm = parseFloat(document.getElementById('arithmetic-first-term').value);
+    const secondTerm = parseFloat(document.getElementById('arithmetic-second-term').value);
+    const thirdTerm = parseFloat(document.getElementById('arithmetic-third-term').value);
+
+    const commonDifference = secondTerm - firstTerm;
+
+    // Verify if the common difference is consistent
+    if (thirdTerm !== secondTerm + commonDifference) {
+        document.getElementById('arithmetic-solution').innerText = "The sequence is not arithmetic or terms are inconsistent.";
+        return;
+    }
+
+    document.getElementById('arithmetic-result').innerText = `Common Difference: ${commonDifference}`;
+    document.getElementById('arithmetic-solution').innerHTML = `
+        The common difference is calculated using the formula:<br><br>
+        d = T<sub>2</sub> - T<sub>1</sub><br><br>
+        where:<br>
+        T<sub>1</sub> = ${firstTerm}<br>
+        T<sub>2</sub> = ${secondTerm}<br><br>
+        d = ${secondTerm} - ${firstTerm}<br>
+        = ${commonDifference.toFixed(2)}
+    `;
+}
+
+        function displayGeometricInputs() {
+            const solveFor = document.getElementById('geometric-solve-for').value;
+            let html = '';
+
+            if (solveFor === 'nth-term') {
+                html = `
+                    <form onsubmit="calculateGeometricNthTerm(event)">
+                    <label for="geometric-first-term">First Term (a):</label>
+                    <input type="text" id="geometric-first-term" required><br>
+                    <label for="geometric-common-ratio">Common Ratio (r):</label>
+                    <input type="text" id="geometric-common-ratio" required><br>
+                    <label for="geometric-n">Term Number (n):</label>
+                    <input type="number" id="geometric-n" required><br>
+                    <button type="submit">Calculate Nth Term</button>
+                </form>
+                <div id="geometric-solution"></div>
+            `;
+            } else if (solveFor === 'common-ratio') {
+                html = `
+                    <form onsubmit="calculateGeometricCommonRatio(event)">
+                        <label for="geometric-first-term">First Term (a):</label>
+                        <input type="text" id="geometric-first-term" required><br>
+                        <label for="geometric-second-term">Second Term (a₂):</label>
+                        <input type="text" id="geometric-second-term" required><br>
+                        <label for="geometric-third-term">Third Term (a₃):</label>
+                        <input type="text" id="geometric-third-term"><br>
+                        <label for="geometric-fourth-term">Fourth Term (a₄):</label>
+                        <input type="text" id="geometric-fourth-term"><br>
+                        <button type="submit">Calculate Common Ratio</button>
+                </form>
+                <div id="geometric-solution"></div>
+                `;
+            } else if (solveFor === 'finite-series') {
+                html = `
+                    <form onsubmit="calculateGeometricFiniteSeries(event)">
+                    <label for="geometric-first-term">First Term (a):</label>
+                    <input type="text" id="geometric-first-term" required><br>
+                    <label for="geometric-second-term">Second Term (a₂):</label>
+                    <input type="text" id="geometric-second-term" required><br>
+                    <label for="geometric-third-term">Third Term (a₃):</label>
+                    <input type="text" id="geometric-third-term" required><br>
+                    <label for="geometric-fourth-term">Fourth Term (a₄):</label>
+                    <input type="text" id="geometric-fourth-term" required><br>
+                    <label for="geometric-terms">Number of Terms (n):</label>
+                    <input type="number" id="geometric-terms" required><br>
+                    <button type="submit">Calculate Finite Series Sum</button>
+                </form>
+                <div id="geometric-solution"></div>
+                `;
+            } else if (solveFor === 'infinite-series') {
+                html = `
+                    <form onsubmit="calculateGeometricInfiniteSeries(event)">
+                        <label for="infinite-first-term">First Term (a):</label>
+                        <input type="text" id="infinite-first-term" required><br>
+                        <label for="infinite-common-ratio">Common Ratio (r):</label>
+                        <input type="text" id="infinite-common-ratio" required><br>
+                        <button type="submit">Calculate Infinite Series Sum</button>
+                    </form>
+                    <div id="infinite-geometric-solution" class="solution"></div>
+                `;
+            }
+
+            document.getElementById('geometric-inputs').innerHTML = html;
+            document.getElementById('geometric-solution').innerText = '';
+        }
+
+        function calculateGeometricNthTerm(event) {
+    event.preventDefault();
+
+    const firstTerm = parseFloat(document.getElementById('geometric-first-term').value);
+    const commonRatio = parseFloat(document.getElementById('geometric-common-ratio').value);
+    const n = parseInt(document.getElementById('geometric-n').value);
+
+    const nthTerm = firstTerm * Math.pow(commonRatio, n - 1);
+
+    document.getElementById('geometric-solution').innerHTML = `
+        The Nth term is calculated using the formula:<br><br>
+        T<sub>n</sub> = a × r<sup>(n - 1)</sup><br><br>
+        where:<br>
+        a = ${firstTerm}<br>
+        r = ${commonRatio}<br>
+        n = ${n}<br><br>
+        T<sub>${n}</sub> = ${firstTerm} × ${commonRatio}<sup>${n - 1}</sup><br>
+        = ${nthTerm.toFixed(2)}
+    `;
+}
+
+function calculateGeometricCommonRatio(event) {
+    event.preventDefault();
+
+    const firstTerm = parseFloat(document.getElementById('geometric-first-term').value);
+    const secondTerm = parseFloat(document.getElementById('geometric-second-term').value);
+    const thirdTerm = parseFloat(document.getElementById('geometric-third-term').value);
+    const fourthTerm = parseFloat(document.getElementById('geometric-fourth-term').value);
+
+    // Calculate common ratio using first and second terms
+    const commonRatio = secondTerm / firstTerm;
+
+    // Verify if the common ratio is consistent
+    if (thirdTerm !== secondTerm * commonRatio || fourthTerm !== thirdTerm * commonRatio) {
+        document.getElementById('geometric-solution').innerHTML = "The sequence is not geometric or terms are inconsistent.";
+        return;
+    }
+
+    document.getElementById('geometric-solution').innerHTML = `
+        The common ratio is calculated using the formula:<br><br>
+        r = T<sub>2</sub> / T<sub>1</sub><br><br>
+        where:<br>
+        T<sub>1</sub> = ${firstTerm}<br>
+        T<sub>2</sub> = ${secondTerm}<br><br>
+        r = ${secondTerm} / ${firstTerm}<br>
+        = ${commonRatio.toFixed(2)}
+    `;
+}
+
+        function calculateGeometricFiniteSeries(event) {
+    event.preventDefault();
+
+    const firstTerm = parseFloat(document.getElementById('geometric-first-term').value);
+    const secondTerm = parseFloat(document.getElementById('geometric-second-term').value);
+    const thirdTerm = parseFloat(document.getElementById('geometric-third-term').value);
+    const fourthTerm = parseFloat(document.getElementById('geometric-fourth-term').value);
+    const numTerms = parseInt(document.getElementById('geometric-terms').value);
+
+    // Calculate common ratio using the first and second terms
+    const commonRatio = secondTerm / firstTerm;
+
+    // Verify if the common ratio is consistent
+    if (thirdTerm !== secondTerm * commonRatio || fourthTerm !== thirdTerm * commonRatio) {
+        document.getElementById('geometric-solution').innerHTML = "The sequence is not geometric or terms are inconsistent.";
+        return;
+    }
+
+    // Calculate the sum of the finite geometric series
+    const sum = firstTerm * (Math.pow(commonRatio, numTerms) - 1) / (commonRatio - 1);
+
+    document.getElementById('geometric-solution').innerHTML = `
+        The sum of the first ${numTerms} terms is calculated using the formula:<br><br>
+        <div style="text-align: center;">
+            S<sub>${numTerms}</sub> = ${firstTerm} × <sup>${commonRatio}<sup>${numTerms}</sup> - 1</sup> / (${commonRatio} - 1)<br><br>
+            = ${firstTerm} × <sup>${commonRatio}<sup>${numTerms}</sup></sup> - 1 / (${commonRatio} - 1)<br><br>
+            = ${firstTerm} × (${Math.pow(commonRatio, numTerms)} - 1) / (${commonRatio} - 1)<br><br>
+            = ${firstTerm} × ${((Math.pow(commonRatio, numTerms) - 1) / (commonRatio - 1)).toFixed(2)}<br><br>
+            = ${sum.toFixed(2)}
+        </div>
+    `;
+}
+
+
+
+function calculateGeometricInfiniteSeries(event) {
+    event.preventDefault();
+
+    const firstTerm = parseFloat(document.getElementById('infinite-first-term').value);
+    const commonRatio = parseFloat(document.getElementById('infinite-common-ratio').value);
+
+    // Ensure common ratio is less than 1
+    if (commonRatio >= 1) {
+        document.getElementById('infinite-geometric-solution').innerText = "The common ratio must be less than 1 for the infinite series sum to be valid.";
+        return;
+    }
+
+    const infiniteSum = firstTerm / (1 - commonRatio);
+
+    document.getElementById('infinite-geometric-solution').innerHTML = `
+        The sum of an infinite geometric series is calculated using the formula:<br><br>
+        S<sub>∞</sub> = a / (1 - r)<br><br>
+        where:<br>
+        a = ${firstTerm}<br>
+        r = ${commonRatio}<br><br>
+        S<sub>∞</sub> = ${firstTerm} / (1 - ${commonRatio})<br>
+        = ${infiniteSum.toFixed(2)}
+    `;
+}
+        function displayQuadraticInputs() {
+            const solveFor = document.getElementById('quadratic-solve-for').value;
+            let html = '';
+
+            if (solveFor === 'nth-term') {
+                html = `
+                    <form onsubmit="calculateQuadraticNthTerm(event)">
+                        <label for="quadratic-first-term">First Term:</label>
+                        <input type="number" id="quadratic-first-term" required><br>
+                        <label for="quadratic-second-term">Second Term:</label>
+                        <input type="number" id="quadratic-second-term" required><br>
+                        <label for="quadratic-third-term">Third Term:</label>
+                        <input type="number" id="quadratic-third-term" required><br>
+                        <label for="quadratic-n">Term Number (n):</label>
+                        <input type="number" id="quadratic-n" required><br>
+                        <button type="submit">Calculate Nth Term</button>
+                    </form>
+                `;
+            } else if (solveFor === 'coefficient') {
+                html = `
+                    <form onsubmit="calculateQuadraticCoefficient(event)">
+                        <label for="quadratic-first-term">First Term:</label>
+                        <input type="number" id="quadratic-first-term" required><br>
+                        <label for="quadratic-second-term">Second Term:</label>
+                        <input type="number" id="quadratic-second-term" required><br>
+                        <label for="quadratic-third-term">Third Term:</label>
+                        <input type="number" id="quadratic-third-term" required><br>
+                        <button type="submit">Calculate Coefficient</button>
+                    </form>
+                `;
+            }
+
+            document.getElementById('quadratic-inputs').innerHTML = html;
+            document.getElementById('quadratic-solution').innerText = '';
+        }
+
+        function calculateQuadraticNthTerm(event) {
+            event.preventDefault();
+            const firstTerm = parseFloat(document.getElementById('quadratic-first-term').value);
+            const secondTerm = parseFloat(document.getElementById('quadratic-second-term').value);
+            const thirdTerm = parseFloat(document.getElementById('quadratic-third-term').value);
+            const n = parseInt(document.getElementById('quadratic-n').value);
+
+            const a = (thirdTerm - 2 * secondTerm + firstTerm) / 2;
+            const b = (secondTerm - firstTerm - a) * 2;
+            const c = firstTerm;
+
+            const nthTerm = a * Math.pow(n, 2) + b * n + c;
+            document.getElementById('quadratic-result').innerText = `Nth Term: ${nthTerm}`;
+            document.getElementById('quadratic-solution').innerText = `The Nth term is calculated using the formula:
+            
+T_n = a * n^2 + b * n + c
+
+where:
+a = ${a}
+b = ${b}
+c = ${c}
+n = ${n}`;
+        }
+
+        function calculateQuadraticCoefficient(event) {
+            event.preventDefault();
+            const firstTerm = parseFloat(document.getElementById('quadratic-first-term').value);
+            const secondTerm = parseFloat(document.getElementById('quadratic-second-term').value);
+            const thirdTerm = parseFloat(document.getElementById('quadratic-third-term').value);
+
+            const a = (thirdTerm - 2 * secondTerm + firstTerm) / 2;
+            const b = (secondTerm - firstTerm - a) * 2;
+            const c = firstTerm;
+
+            document.getElementById('quadratic-result').innerText = `Coefficients: a = ${a}, b = ${b}, c = ${c}`;
+            document.getElementById('quadratic-solution').innerText = `The coefficients are calculated using the formula:
+            
+a = (T_3 - 2 * T_2 + T_1) / 2
+b = (T_2 - T_1 - a) * 2
+c = T_1
+
+where:
+T_1 = ${firstTerm}
+T_2 = ${secondTerm}
+T_3 = ${thirdTerm}`;
+        }
+    </script>
+</body>
+</html>

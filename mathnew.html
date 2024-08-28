@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polynomial Division Solver</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Polynomial Division Solver</h1>
+            <button id="darkModeToggle">Toggle Dark Mode</button>
+        </header>
+        <main>
+            <div class="input-section">
+                <label for="polynomial">Enter Polynomial (e.g., x^3 - 4*x + 2):</label>
+                <input type="text" id="polynomial" placeholder="x^3 - 4*x + 2">
+                <label for="divider">Enter Divider Polynomial:</label>
+                <input type="text" id="divider" placeholder="x - 2">
+                <button id="solveButton">Solve</button>
+            </div>
+            <div class="result-section">
+                <div id="solution"></div>
+            </div>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
