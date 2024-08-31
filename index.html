@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jols1337</title>
     <style>
+        /* Existing CSS */
         body {
             display: flex;
             justify-content: center;
@@ -29,6 +30,18 @@
             margin-bottom: 20px;
             transition: color 0.5s ease;
         }
+        .chatbot-button {
+            margin-bottom: 20px; /* Space between title and buttons */
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .chatbot-button:hover {
+            background-color: #0056b3; /* Matching hover color */
+        }
         .buttons {
             display: flex;
             justify-content: center;
@@ -45,6 +58,18 @@
         button:hover {
             background-color: #007bff;
             color: white;
+        }
+        .update-log-button {
+            margin-top: 20px;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .update-log-button:hover {
+            background-color: #0056b3;
         }
         iframe {
             width: 100%;
@@ -123,7 +148,6 @@
         .toggle-switch:checked:before {
             transform: translateX(25px);
         }
-
         .dark-mode {
             background-color: #333;
             color: #f0f0f0;
@@ -138,6 +162,59 @@
         .dark-mode button:hover {
             background-color: #777;
         }
+        .info-message {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            color: #333;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            z-index: 4;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        .update-log {
+            display: none;
+            position: fixed; /* Changed to fixed positioning */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            color: #333;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            z-index: 4;
+            font-size: 1.2rem;
+            font-weight: bold;
+            width: 80%; /* Adjust width as needed */
+            max-width: 600px; /* Set a max-width */
+            opacity: 0;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .update-log.show {
+            display: block;
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1.05); /* Animation effect */
+        }
+        .update-log .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #333;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        .update-log .close-button:hover {
+            color: red;
+        }
     </style>
 </head>
 <body>
@@ -147,11 +224,13 @@
     </div>
     <div class="container" id="main-menu">
         <h1>Why are you here?</h1>
+        <button class="chatbot-button" onclick="showBetaMessage()">Chatbot (BETA)</button>
         <div class="buttons">
             <button onclick="showMathOptions()">Math</button>
             <button onclick="loadContent('utang.html')">Utang</button>
             <button onclick="rickRoll()">Notes</button>
         </div>
+        <button class="update-log-button" onclick="showUpdateLog()">Update Log</button>
     </div>
     <div class="container" id="math-options" style="display: none;">
         <h1>Select an Option</h1>
@@ -164,8 +243,28 @@
     <button class="back-button" onclick="goBackToMenu()">
         <span class="icon">&lt;</span> Menu
     </button>
+    <div id="info-message" class="info-message">
+        This is on BETA test and the bot will only answer related to math. 
+        Also use math symbols or words to make the bot reply. 
+        And most important, the BOT WILL MAKE MISTAKE SO PLEASE RE-CHECK IT!!
+    </div>
+    <div id="update-log" class="update-log">
+        <button class="close-button" onclick="closeUpdateLog()">&times;</button>
+        <h2>Update Log - Version 1.2</h2>
+        <p><strong>New Feature:</strong> AI Math Solver</p>
+        <p>Status: Beta</p>
+        <p>This major update introduces an AI Math Solver feature that is currently in beta testing. The AI Math Solver is designed to assist with solving mathematical problems, At the moment there's no solution but soon will be added. Feedback is appreciated as we continue to improve this feature.</p>
+    </div>
 
     <script>
+        function showBetaMessage() {
+            document.getElementById('info-message').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('info-message').style.display = 'none';
+                loadContent('AI.html');
+            }, 10000); // Show message for 10 seconds
+        }
+
         function showMathOptions() {
             document.getElementById('main-menu').style.display = 'none';
             document.getElementById('math-options').style.display = 'flex';
@@ -198,7 +297,16 @@
                 document.querySelector('.back-button').style.display = 'none'; // Hide back button
                 document.getElementById('content-frame').src = '';
                 document.getElementById('math-options').style.display = 'none'; // Hide math options
+                document.getElementById('update-log').style.display = 'none'; // Hide update log
             }, 500); 
+        }
+
+        function showUpdateLog() {
+            document.getElementById('update-log').classList.add('show');
+        }
+
+        function closeUpdateLog() {
+            document.getElementById('update-log').classList.remove('show');
         }
 
         const darkModeToggle = document.getElementById('dark-mode-toggle');
