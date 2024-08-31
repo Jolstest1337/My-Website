@@ -215,6 +215,20 @@
         .update-log .close-button:hover {
             color: red;
         }
+        .skip-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+        .skip-button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -247,6 +261,7 @@
         This is on BETA test and the bot will only answer related to math. 
         Also use math symbols or words to make the bot reply. 
         And most important, the BOT WILL MAKE MISTAKE SO PLEASE RE-CHECK IT!!
+        <button class="skip-button" onclick="skipToAI()">Skip</button>
     </div>
     <div id="update-log" class="update-log">
         <button class="close-button" onclick="closeUpdateLog()">&times;</button>
@@ -314,6 +329,11 @@
         darkModeToggle.addEventListener('change', () => {
             document.body.classList.toggle('dark-mode', darkModeToggle.checked);
         });
+
+        function skipToAI() {
+            document.getElementById('info-message').style.display = 'none'; // Hide info message
+            loadContent('AI.html'); // Load AI page
+        }
     </script>
 </body>
 </html>
