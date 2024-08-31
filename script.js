@@ -4,40 +4,38 @@ document.getElementById('solveButton').addEventListener('click', function() {
     
     try {
         const poly = parsePolynomial(polynomial);
-        const div = parsePolynomial(divider);
+        const [divisorRoot] = parseLinearDivisor(divider);
         
-        const { quotient, remainder, steps } = polynomialDivision(poly, div);
+        if (divisorRoot === undefined) {
+            throw new Error('Invalid divisor format');
+        }
+
+        const adjustedDivisorRoot = divisorRoot < 0 ? -divisorRoot : -divisorRoot;
+        const { quotient, remainder, table } = syntheticDivision(poly, Math.abs(adjustedDivisorRoot));
         
         const quotientStr = formatPolynomial(quotient);
-        const remainderStr = formatPolynomial(remainder);
-        const dividerStr = divider;
+        const remainderStr = remainder.length ? remainder[0] : '0';
+        const sign = remainder[0] < 0 ? '-' : '+';
+        const absRemainderStr = Math.abs(remainder[0]);
+        const dividerStr = `x - ${Math.abs(divisorRoot)}`;
         
-        // Prepare result string
         let resultStr = `<h2>Result:</h2><p>Quotient: ${quotientStr}`;
         if (remainder.length > 0) {
-            const sign = remainder[0] < 0 ? '-' : '+';
-            const remainderAbsStr = formatPolynomial(remainder.map(coef => Math.abs(coef)));
-            resultStr += ` ${sign} <span class="fraction"><span class="numerator">${remainderAbsStr}</span><span class="denominator">${dividerStr}</span></span>`;
+            resultStr += ` ${sign} <span class="fraction"><span class="numerator">${absRemainderStr}</span><span class="denominator">${dividerStr}</span></span>`;
         }
         resultStr += `</p>`;
         
-        // Add note below result
-        resultStr += `<p><strong>DO NOT USE THIS SOLUTION IT'S NOT FOR OUR CLASS I CAN'T FIGURE IT OUT TO USE LONG DIVISION</strong></p>`;
-        
-        // Add solution steps
         resultStr += `<h2>Solution:</h2>`;
-        steps.forEach((step, index) => {
-            resultStr += `<h3>Step ${index + 1}:</h3><p>${step}</p>`;
-        });
+        resultStr += generateTable(table, Math.abs(adjustedDivisorRoot));
+        
+        if (remainder.length > 0) {
+            resultStr += `<p>r = ${remainderStr}</p>`;
+        }
         
         document.getElementById('solution').innerHTML = resultStr;
     } catch (error) {
         document.getElementById('solution').innerText = 'Error in polynomial format or calculation.';
     }
-});
-
-document.getElementById('darkModeToggle').addEventListener('click', function() {
-    document.body.classList.toggle('dark-mode');
 });
 
 function parsePolynomial(poly) {
@@ -58,60 +56,63 @@ function parsePolynomial(poly) {
             parsed[exp] = (parsed[exp] || 0) + coef;
         }
     });
-    return parsed;
+    return parsed.reverse();
 }
 
-function polynomialDivision(dividend, divisor) {
+function parseLinearDivisor(divisor) {
+    const match = divisor.match(/x\s*([-+]\s*\d+)/);
+    if (match) {
+        return [parseInt(match[1].replace(/\s+/g, ''), 10)];
+    }
+    return [];
+}
+
+function syntheticDivision(dividend, divisorRoot) {
     const quotient = [];
-    const remainder = [...dividend];
-    const steps = [];
+    const table = [];
+    const tempDividend = [...dividend];
     
-    while (remainder.length >= divisor.length) {
-        const leadTermExp = remainder.length - 1;
-        const divisorLeadTermExp = divisor.length - 1;
-        
-        const termExp = leadTermExp - divisorLeadTermExp;
-        const termCoef = remainder[leadTermExp] / divisor[divisorLeadTermExp];
-        
-        const term = Array(termExp + 1).fill(0);
-        term.push(termCoef);
-        quotient[termExp] = termCoef;
-        
-        const stepDescription = generateStepDescription(remainder, divisor, term, termCoef, termExp);
-        steps.push(stepDescription);
-        
-        for (let i = 0; i < divisor.length; i++) {
-            remainder[leadTermExp - divisorLeadTermExp + i] -= termCoef * divisor[i];
-        }
-        remainder.pop();
-        
-        while (remainder.length && remainder[0] === 0) {
-            remainder.shift();
+    const row1 = ['a', ...tempDividend.map(coef => coef.toString())];
+    const row2 = new Array(tempDividend.length + 1).fill('');
+
+    table.push(row1);
+    table.push(row2);
+
+    let carry = 0;
+
+    for (let i = 0; i < tempDividend.length; i++) {
+        const current = tempDividend[i] + carry;
+        quotient.push(current);
+        carry = current * divisorRoot;
+
+        if (i < tempDividend.length - 1) {
+            row2[i + 2] = carry.toString();
         }
     }
-    
-    return { quotient: quotient.reverse(), remainder: remainder.reverse(), steps };
+
+    const remainder = [quotient.pop()];
+
+    table.push(['', ...quotient.map(coef => coef.toString()), remainder[0]]);
+
+    return { quotient, remainder, table };
 }
 
-function generateStepDescription(remainder, divisor, term, termCoef, termExp) {
-    const termStr = formatPolynomial(term);
-    const remainderStr = formatPolynomial(remainder);
-    const divisorStr = formatPolynomial(divisor);
+function generateTable(tableData, divisorRoot) {
+    let html = '<table border="1" style="border-collapse: collapse; text-align: center;">';
     
-    let stepDescription = `<div class="step">`;
-    stepDescription += `Divide: <span class="fraction"><span class="numerator">${remainderStr}</span><span class="denominator">${divisorStr}</span></span> = ${termStr}<br>`;
-    stepDescription += `Multiply and Subtract:<br>`;
-    stepDescription += `<span class="fraction"><span class="numerator">${remainderStr}</span><span class="denominator">${divisorStr}</span></span> - ${termStr} * ${divisorStr}<br>`;
+    html += '<tr>';
+    html += `<th>${divisorRoot}</th>`;
+    tableData[0].slice(1).forEach(cell => html += `<th>${cell}</th>`);
+    html += '</tr>';
+
+    for (let i = 1; i < tableData.length; i++) {
+        html += '<tr>';
+        tableData[i].forEach(cell => html += `<td>${cell}</td>`);
+        html += '</tr>';
+    }
     
-    const multipliedDivisor = divisor.map(coef => coef * termCoef);
-    const multipliedDivisorStr = formatPolynomial(multipliedDivisor);
-    const newRemainder = remainder.map((coef, i) => coef - (multipliedDivisor[i] || 0));
-    const newRemainderStr = formatPolynomial(newRemainder);
-    
-    stepDescription += `= ${newRemainderStr}<br>`;
-    stepDescription += `</div>`;
-    
-    return stepDescription;
+    html += '</table>';
+    return html;
 }
 
 function formatPolynomial(poly) {
