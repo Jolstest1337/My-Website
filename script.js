@@ -10,14 +10,15 @@ document.getElementById('solveButton').addEventListener('click', function() {
             throw new Error('Invalid divisor format');
         }
 
-        const adjustedDivisorRoot = divisorRoot < 0 ? -divisorRoot : -divisorRoot;
-        const { quotient, remainder, table } = syntheticDivision(poly, Math.abs(adjustedDivisorRoot));
+        // This took me years to fix ( just 35 mins )
+        const adjustedDivisorRoot = -divisorRoot;
+        const { quotient, remainder, table } = syntheticDivision(poly, adjustedDivisorRoot);
         
         const quotientStr = formatPolynomial(quotient);
         const remainderStr = remainder.length ? remainder[0] : '0';
         const sign = remainder[0] < 0 ? '-' : '+';
         const absRemainderStr = Math.abs(remainder[0]);
-        const dividerStr = `x - ${Math.abs(divisorRoot)}`;
+        const dividerStr = adjustedDivisorRoot < 0 ? `x + ${Math.abs(adjustedDivisorRoot)}` : `x - ${adjustedDivisorRoot}`;
         
         let resultStr = `<h2>Result:</h2><p>Quotient: ${quotientStr}`;
         if (remainder.length > 0) {
@@ -26,7 +27,7 @@ document.getElementById('solveButton').addEventListener('click', function() {
         resultStr += `</p>`;
         
         resultStr += `<h2>Solution:</h2>`;
-        resultStr += generateTable(table, Math.abs(adjustedDivisorRoot));
+        resultStr += generateTable(table, adjustedDivisorRoot);
         
         if (remainder.length > 0) {
             resultStr += `<p>r = ${remainderStr}</p>`;
