@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polynomial Factorization Solver</title>
+    <link rel="stylesheet" href="polstyles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Polynomial Factorization Solver</h1>
+        
+        <div class="input-section">
+            <label for="polynomialInput">Enter your polynomial:</label>
+            <input type="text" id="polynomialInput" placeholder="e.g. x^2 - 9, x^3 - 8, 2x^2 + 3x - 2">
+            <button id="solveButton">Solve</button>
+        </div>
+
+        <div id="solutionOutput" class="solution-section hidden">
+            <h2>Solution</h2>
+
+            <div class="solution-block">
+                <h3>Factoring Method Used:</h3>
+                <p id="methodOutput"></p>
+            </div>
+
+            <div class="solution-block">
+                <h3>Factored Form:</h3>
+                <pre id="factoredOutput"></pre>
+            </div>
+
+            <div class="solution-block">
+                <h3>Steps to Solve:</h3>
+                <pre id="stepsOutput" class="text-placeholder"></pre>
+            </div>
+        </div>
+    </div>
+
+    <script src="polscript.js"></script>
+</body>
+</html>
