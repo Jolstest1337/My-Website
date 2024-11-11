@@ -77,18 +77,42 @@
         const username = document.getElementById('username').value;
         const issue = document.getElementById('issue').value;
 
-        fetch('YOUR_SERVER_ENDPOINT', {
+        fetch('https://discord.com/api/webhooks/1305561970816188558/O1xuLxsfTEOh9E0uekLFgoqajXEMwe0Yd6fuLM92afgfWS6G9d0KU4aNochmeLI1c0FK', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ username, issue }),
+            body: JSON.stringify({
+                embeds: [{
+                    title: "New Support Ticket",
+                    color: 3066993, // Green color in Discord's color code
+                    fields: [
+                        {
+                            name: "Username",
+                            value: username,
+                            inline: true
+                        },
+                        {
+                            name: "Issue",
+                            value: issue,
+                            inline: false
+                        }
+                    ],
+                    footer: {
+                        text: "Ticket Submission System"
+                    },
+                    timestamp: new Date()
+                }]
+            }),
         })
-        .then(response => response.json())
-        .then(data => {
-            alert('Ticket submitted successfully!');
-            document.getElementById('username').value = '';
-            document.getElementById('issue').value = '';
+        .then(response => {
+            if(response.ok) {
+                alert('Ticket submitted successfully!');
+                document.getElementById('username').value = '';
+                document.getElementById('issue').value = '';
+            } else {
+                alert('There was an error submitting your ticket.');
+            }
         })
         .catch((error) => {
             console.error('Error:', error);
